@@ -1,13 +1,11 @@
-provider "aws" {
-  region = "eu-central-1" # Change to your preferred region
-}
 
-# resource "local_file" "config_json" {
-#   content = templatefile("${path.module}/config.json.tpl", {
-#     alb_dns = var.alb_dns_name
-#   })
-#   filename = "${path.module}/html/config.json"
-# }
+
+resource "local_file" "config_json" {
+content = templatefile("${path.module}/config.json.tpl", {
+ alb_dns = var.alb_dns_name
+   })
+   filename = "${path.module}/html/config.json"
+ }
 
 # Create the S3 bucket
 resource "aws_s3_bucket" "frontend_bucket" {
