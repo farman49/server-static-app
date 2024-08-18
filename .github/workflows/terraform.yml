@@ -23,7 +23,6 @@ jobs:
 
       - name: Set up Terraform
         run: |
-          cd terraform
           terraform init
 
           # Determine the branch and apply the corresponding Terraform configuration
