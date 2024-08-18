@@ -1,0 +1,45 @@
+name: Deploy Infrastructure and Application
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - prod
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Set your desired AWS region
+
+      - name: Set up Terraform
+        run: |
+          cd terraform
+          terraform init
+
+          # Determine the branch and apply the corresponding Terraform configuration
+          case "${{ github.ref_name }}" in
+            "dev")
+              terraform apply -var-file="dev.tfvars" -auto-approve
+              ;;
+            "prod")
+              terraform apply -var-file="prod.tfvars" -auto-approve
+              ;;
+            "main")
+              echo "Main branch detected. Consider using a staging environment."
+              ;;
+            *)
+              echo "No matching branch found. Exiting."
+              exit 1
+              ;;
+          esac
+
