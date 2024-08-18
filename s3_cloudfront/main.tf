@@ -56,12 +56,12 @@ resource "aws_s3_bucket_public_access_block" "experior_bucket_public_access" {
 # Upload index.html to the S3 bucket
 ##### will upload all the files present under HTML folder to the S3 bucket #####
 resource "aws_s3_object" "upload_object" {
-  for_each      = fileset("html/", "*")
+   for_each      = fileset("${path.module}/html/", "*")
   bucket        = aws_s3_bucket.frontend_bucket.id
-  key           = each.value
-  source        = "html/${each.value}"
-  etag          = filemd5("html/${each.value}")
-  content_type  = "text/html"
+ key           = each.value
+  source        = "${path.module}/html/${each.value}"
+  etag          = filemd5("${path.module}/html/${each.value}")
+   content_type  = "text/html"
 }
 
 # Create CloudFront Distribution
