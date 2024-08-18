@@ -25,20 +25,14 @@ jobs:
         run: |
           terraform init
 
-          # Determine the branch and apply the corresponding Terraform configuration
-          case "${{ github.ref_name }}" in
-            "dev")
-              terraform apply -var-file="dev.tfvars" -auto-approve
-              ;;
-            "prod")
-              terraform apply -var-file="prod.tfvars" -auto-approve
-              ;;
-            "main")
-              echo "Main branch detected. Consider using a staging environment."
-              ;;
-            *)
-              echo "No matching branch found. Exiting."
-              exit 1
-              ;;
-          esac
+          if [[ ${{ github.ref_name }} == "dev" ]]; then
+            terraform init
+            terraform apply -var-file="dev.tfvars" -auto-approve
+          elif [[ ${{ github.ref_name }} == "prod" ]]; then
+            terraform init
+            terraform apply -var-file="prod.tfvars" -auto-approve
+          else
+            echo "No matching branch found. Exiting."
+            exit 1
+          fi
 
